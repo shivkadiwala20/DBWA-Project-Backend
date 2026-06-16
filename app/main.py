@@ -1,8 +1,8 @@
-import subprocess
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
+from .db import get_conn
 from .routers import mandatory, analytics, dashboard, sources
 
 app = FastAPI(
@@ -43,10 +43,10 @@ app.add_middleware(
 def init_db():
     sql_path = Path(__file__).parent / "sql" / "init.sql"
     if sql_path.exists():
-        subprocess.run(
-            ["psql", settings.database_url, "-f", str(sql_path)],
-            check=True,
-        )
+        sql = sql_path.read_text(encoding="utf-8")
+        with get_conn() as conn:
+            with conn.cursor() as cur:
+                cur.execute(sql)
     print("DB ready | API: http://localhost:8000 | Docs: http://localhost:8000/api/docs")
 
 
