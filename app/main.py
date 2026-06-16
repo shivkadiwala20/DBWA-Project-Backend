@@ -1,4 +1,3 @@
-from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
@@ -41,13 +40,11 @@ app.add_middleware(
 
 @app.on_event("startup")
 def init_db():
-    sql_path = Path(__file__).parent / "sql" / "init.sql"
-    if sql_path.exists():
-        sql = sql_path.read_text(encoding="utf-8")
-        with get_conn() as conn:
-            with conn.cursor() as cur:
-                cur.execute(sql)
-    print("DB ready | API: http://localhost:8000 | Docs: http://localhost:8000/api/docs")
+    with get_conn() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT COUNT(*) FROM accidents")
+            count = cur.fetchone()[0]
+    print(f"DB ready | {count} accidents | API: http://localhost:8000 | Docs: http://localhost:8000/api/docs")
 
 
 app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
