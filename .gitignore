@@ -1,0 +1,25 @@
+# Python virtual environment — never push (huge, auto-installed with pip)
+venv/
+.venv/
+env/
+
+# Compiled Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment / secrets — NEVER push (contains DB password)
+.env
+*.env
+
+# CSV data files — large binary-ish files, not source code
+data/*.csv
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
